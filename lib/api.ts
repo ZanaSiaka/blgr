@@ -3,7 +3,7 @@ import "server-only";
 import { getSession } from "@/lib/auth";
 import type { ApiErrorShape } from "@/lib/types";
 
-const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8001";
+const API_BASE_URL = process.env.API_BASE_URL ?? "https://backend-boulangerie.vercel.app";
 
 export class ApiError extends Error {
   code: string;
