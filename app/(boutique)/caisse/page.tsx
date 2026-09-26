@@ -1,6 +1,6 @@
 import { apiGet } from "@/lib/api";
 import { requireSession } from "@/lib/auth";
-import type { PosProduct, Site } from "@/lib/types";
+import type { Closure, PosProduct, Site } from "@/lib/types";
 import PosView from "@/components/views/pos-view";
 import SitePicker from "@/components/site-picker";
 
@@ -19,8 +19,12 @@ export default async function CaissePage({
     return <SitePicker sites={sites} path="/caisse" />;
   }
 
-  const products = await apiGet<PosProduct[]>(`/pos/products?site_id=${siteId}`);
+  const [products, closures] = await Promise.all([
+    apiGet<PosProduct[]>(`/pos/products?site_id=${siteId}`),
+    apiGet<Closure[]>(`/pos/closures?site_id=${siteId}`),
+  ]);
   const siteName = sites.find((site) => site.id === siteId)?.name ?? "Boutique";
+  const caisseOpen = closures.some((closure) => closure.status === "OPEN");
 
-  return <PosView products={products} siteId={siteId} siteName={siteName} />;
+  return <PosView products={products} siteId={siteId} siteName={siteName} caisseOpen={caisseOpen} />;
 }

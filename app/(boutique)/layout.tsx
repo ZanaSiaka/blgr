@@ -9,6 +9,7 @@ const BOUTIQUE_LINKS: NavItem[] = [
   { href: "/reception", label: "Réception" },
   { href: "/production", label: "Production" },
   { href: "/depenses", label: "Dépenses" },
+  { href: "/journee", label: "Fiche Journée" },
   { href: "/stock-boutique", label: "Stock Boutique" },
   { href: "/clotures", label: "Clôtures" },
 ];
