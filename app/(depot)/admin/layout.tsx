@@ -16,6 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   links.push(
     { href: "/admin/fournisseurs", label: "Fournisseurs" },
     { href: "/admin/articles", label: "Matières & Produits" },
+    { href: "/admin/receptions", label: "Réceptions" },
     { href: "/admin/parametres", label: "Paramètres" },
   );
 

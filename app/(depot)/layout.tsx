@@ -11,6 +11,7 @@ const DEPOT_LINKS: NavItem[] = [
   { href: "/recettes", label: "Recettes" },
   { href: "/stock-central", label: "Stock Central" },
   { href: "/rapports", label: "Rapports" },
+  { href: "/rapports/journee", label: "Fiche Journée" },
   { href: "/admin", label: "Administration" },
 ];
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Send, Trash2, Truck } from "lucide-react";
 
-import { createTransfer } from "@/app/actions/transfers";
+import { cancelTransfer, createTransfer } from "@/app/actions/transfers";
 import { Badge, Button, Card, CardHeader, ErrorBanner, PageHeader, PageShell, SuccessBanner } from "@/components/ui";
 import { useMutate } from "@/components/use-mutate";
 import type { Site, StockItem, TransferNote } from "@/lib/types";
@@ -13,10 +13,11 @@ interface TransferLine {
   qty_sent: number;
 }
 
-const STATUS_LABEL: Record<TransferNote["status"], { label: string; tone: "amber" | "green" | "red" }> = {
+const STATUS_LABEL: Record<TransferNote["status"], { label: string; tone: "amber" | "green" | "red" | "slate" }> = {
   OPEN: { label: "En transit", tone: "amber" },
   RECEIVED: { label: "Conforme", tone: "green" },
   DISCREPANCY: { label: "Avec écart", tone: "red" },
+  CANCELLED: { label: "Annulé", tone: "slate" },
 };
 
 export default function TransfertView({
@@ -34,6 +35,13 @@ export default function TransfertView({
   const [destination, setDestination] = useState<number>(boutiques[0]?.id ?? 0);
   const [lines, setLines] = useState<TransferLine[]>([{ article_id: depotStock[0]?.article_id ?? 0, qty_sent: 10 }]);
   const { run, pending, error, success } = useMutate();
+  const { run: runCancel, pending: cancelPending } = useMutate();
+
+  const cancel = (noteId: number) => {
+    runCancel(() =>
+      cancelTransfer(noteId).then((result) => ({ ok: result.ok, error: result.ok ? undefined : result.error })),
+    );
+  };
 
   const addLine = () => {
     setLines([...lines, { article_id: depotStock[0]?.article_id ?? 0, qty_sent: 10 }]);
@@ -174,7 +182,18 @@ export default function TransfertView({
                     <p className="font-bold text-slate-800">{note.ref}</p>
                     <span className="text-[11px] text-slate-500">{note.lines.length} article(s) · {new Date(note.created_at).toLocaleString("fr-FR")}</span>
                   </div>
-                  <Badge tone={status.tone}>{status.label}</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge tone={status.tone}>{status.label}</Badge>
+                    {note.status === "OPEN" ? (
+                      <button
+                        onClick={() => cancel(note.id)}
+                        disabled={cancelPending}
+                        className="text-[10px] px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 font-medium"
+                      >
+                        Annuler
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
               );
             })}

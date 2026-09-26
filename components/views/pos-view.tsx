@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Banknote, CheckCircle2, ShoppingBag, Smartphone, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Banknote, CheckCircle2, Lock, ShoppingBag, Smartphone, Trash2 } from "lucide-react";
 
 import { createSale } from "@/app/actions/pos";
 import { Button, Card, ErrorBanner, cn, formatFCFA, PageShell, SuccessBanner } from "@/components/ui";
@@ -17,10 +18,12 @@ export default function PosView({
   products,
   siteId,
   siteName,
+  caisseOpen,
 }: {
   products: PosProduct[];
   siteId: number;
   siteName: string;
+  caisseOpen: boolean;
 }) {
   const [category, setCategory] = useState("Tous");
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -88,8 +91,22 @@ export default function PosView({
           <h2 className="text-base font-semibold text-slate-900">Caisse (POS)</h2>
           <p className="text-xs text-slate-500">{siteName} · vente rapide avec mise à jour automatique du stock</p>
         </div>
-        <span className="text-xs font-medium px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded-md">Caisse active</span>
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5 ${caisseOpen ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" : "bg-red-50 text-red-700 border border-red-200/60"}`}>
+          {caisseOpen ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+          {caisseOpen ? "Caisse active" : "Caisse fermée"}
+        </span>
       </div>
+
+      {!caisseOpen ? (
+        <div role="alert" className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-md text-xs font-medium flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <Lock className="w-3.5 h-3.5" /> La caisse est fermée : ouvrez-la pour encaisser.
+          </span>
+          <Link href="/clotures" className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md">
+            Ouvrir la caisse
+          </Link>
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div className="lg:col-span-7 space-y-4">
@@ -196,8 +213,8 @@ export default function PosView({
                 <Smartphone className="w-3.5 h-3.5" /> Mobile Money
               </Button>
             </div>
-            <Button onClick={checkout} disabled={pending || cart.length === 0} className="w-full">
-              <CheckCircle2 className="w-3.5 h-3.5" /> {pending ? "Encaissement..." : `Encaisser ${formatFCFA(total)}`}
+            <Button onClick={checkout} disabled={pending || cart.length === 0 || !caisseOpen} className="w-full">
+              <CheckCircle2 className="w-3.5 h-3.5" /> {!caisseOpen ? "Caisse fermée" : pending ? "Encaissement..." : `Encaisser ${formatFCFA(total)}`}
             </Button>
           </div>
         </Card>

@@ -27,6 +27,7 @@ const ADMIN_PATHS = [
   "/admin/boutiques",
   "/admin/fournisseurs",
   "/admin/articles",
+  "/admin/receptions",
   "/admin/parametres",
 ];
 

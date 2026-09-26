@@ -28,7 +28,7 @@ const PRODUCTS: PosProduct[] = [
 describe("PosView", () => {
   beforeEach(() => {
     mockedCreateSale.mockClear();
-    render(<PosView products={PRODUCTS} siteId={2} siteName="Boutique Riviera" />);
+    render(<PosView products={PRODUCTS} siteId={2} siteName="Boutique Riviera" caisseOpen />);
   });
 
   it("affiche les produits disponibles", () => {
