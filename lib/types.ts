@@ -353,88 +353,125 @@ export interface ReceptionRow {
   lines: ReceptionLine[];
 }
 
-// Fiche journalière
+// Journal quotidien -------------------------------------------------
 export interface DailyProductionLine {
+  id: number;
+  recipe_id: number | null;
   shift: Shift;
   position: number;
-  kg: number;
-  nbre_pate: number;
-  double: number;
-  baguette: number;
-  nd: number;
-  ficelle: number;
-  levure: number;
-  ameliorant: number;
-  sel: number;
-  baker_name: string | null;
-}
-
-export interface DailySpecialClient {
-  client_name: string;
   quantity: number;
-  unit_price: number;
-  amount_due: number;
-  amount_paid: number;
-  amount_to_pay: number;
+  pu: number;
+  kg: number;
 }
 
-export interface DailyMaterialStock {
+export interface DailyRafraichissementLine {
+  id: number;
   article_id: number | null;
+  designation: string;
+  stock_initial: number;
+  arrivage: number;
+  vendus: number;
+  pu: number;
+}
+
+export interface DailyPatisserieLine {
+  id: number;
+  article_id: number | null;
+  designation: string;
+  report: number;
+  produit: number;
+  vendus: number;
+  pu: number;
+  reste: number;
+  racis: number;
+}
+
+export interface DailyStockMatiere {
+  id: number;
   designation: string;
   stock_initial: number;
   arrivage: number;
   sortie: number;
   utilise: number;
-  stock_k: number;
-  stock_final_sac: number;
+  total?: number;
+  stock_final?: number;
 }
 
-export interface DailySheetData {
+export interface DailyClientSpecial {
+  id: number;
+  designation: string;
+  quantity: number;
+  unit_price: number;
+  total: number;
+  amount_due: number;
+  amount_paid: number;
+  amount_to_pay: number;
+}
+
+export interface DailyDepense {
+  id: number;
+  designation: string;
+  montant: number;
+}
+
+export interface DailyJournalData {
+  id: number | null;
   site_id: number;
-  date: string;
+  journal_date: string;
+  boulanger_names: string | null;
   cashier_name: string | null;
-  manager_name: string | null;
+  cashier_phone: string | null;
   personnel: string | null;
+  observations: string | null;
   montant_verse: number;
   bank_name: string | null;
   bank_ref: string | null;
-  gas_bottle_level: string | null;
-  unsold_broken: number;
-  unsold_stale: number;
-  unsold_ration: number;
-  unsold_other: number;
-  notes: string | null;
-  production: DailyProductionLine[];
-  kg_total: number;
-  kg_baguettes: number;
-  baguette_total: number;
-  special_clients: DailySpecialClient[];
+  wave_amount: number;
+  orange_amount: number;
+  invendus_casse: number;
+  invendus_brule: number;
+  invendus_rasse: number;
+  invendus_ration: number;
+  glace_arrivage_pack: number;
+  glace_arrivage_cornet: number;
+  glace_vendus: number;
+  glace_pu: number;
+  glace_prix_vente: number;
+  productions: DailyProductionLine[];
+  rafraichissements: DailyRafraichissementLine[];
+  patisseries: DailyPatisserieLine[];
+  stock_matieres: DailyStockMatiere[];
+  clients_speciaux: DailyClientSpecial[];
+  depenses: DailyDepense[];
+  glacier_lines: GlacierLine[];
   recette_client_special: number;
-  materials: DailyMaterialStock[];
-  expenses: { category: string; total: number }[];
-  total_depenses: number;
-  sales_total: number;
-  sales_count: number;
-  sales_by_category: Record<string, number>;
-  sales_by_payment: Record<string, number>;
   recette_pain: number;
-  recette_viennoiserie: number;
-  recette_patisserie: number;
+  recette_patisseries: number;
   recette_frigo: number;
-  closures: {
-    id: number;
-    status: string;
-    expected_cash: number;
-    expected_mobile: number;
-    expected_card: number;
-    counted_cash: number | null;
-    counted_mobile: number | null;
-    counted_card: number | null;
-    over_short: number;
-  }[];
-  total_montant: number;
+  recette_glacier: number;
+  total_glaces: number;
+  montant_restant_glace: number;
+  total_recette: number;
+  total_depenses: number;
+  solde: number;
   manquant: number;
+  total_production: number;
+  baguette_total: number;
+  vendues: number;
+  total_patisserie: number;
 }
+
+export interface GlacierLine {
+  id: number;
+  category: GlacierCategory;
+  designation: string;
+  stock_initial: number;
+  arrivage: number;
+  vendus: number;
+  pu: number;
+}
+
+export type GlacierCategory = "RAFRAICHISSEMENT" | "RESTAURANT";
 
 export interface IngredientMapEntry {
   role: "FARINE" | "LEVURE" | "AMELIORANT" | "SEL";

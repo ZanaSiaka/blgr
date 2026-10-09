@@ -42,64 +42,100 @@ export const returnSchema = z
   })
   .strict();
 
-export const dailyProductionLineSchema = z.object({
+export const journalProductionLineSchema = z.object({
+  recipe_id: z.number().int().positive().nullable().optional(),
   shift: z.enum(["MATIN", "APRES_MIDI"]).default("MATIN"),
-  position: z.coerce.number().int().min(0).default(0),
+  position: z.coerce.number().int().min(1).max(5).default(1),
+  quantity: z.coerce.number().int().min(0).default(0),
+  pu: z.coerce.number().int().min(0).default(0),
   kg: z.coerce.number().min(0).default(0),
-  nbre_pate: z.coerce.number().int().min(0).default(0),
-  double: z.coerce.number().int().min(0).default(0),
-  baguette: z.coerce.number().int().min(0).default(0),
-  nd: z.coerce.number().int().min(0).default(0),
-  ficelle: z.coerce.number().int().min(0).default(0),
-  levure: z.coerce.number().min(0).default(0),
-  ameliorant: z.coerce.number().min(0).default(0),
-  sel: z.coerce.number().min(0).default(0),
-  baker_name: z.string().max(120).nullable().optional(),
 });
 
-export const dailySheetSchema = z
+export const journalRafraichissementSchema = z.object({
+  article_id: z.number().int().positive().nullable().optional(),
+  designation: z.string().min(1).max(120),
+  stock_initial: z.coerce.number().int().min(0).default(0),
+  arrivage: z.coerce.number().int().min(0).default(0),
+  vendus: z.coerce.number().int().min(0).default(0),
+  pu: z.coerce.number().int().min(0).default(0),
+});
+
+export const journalPatisserieSchema = z.object({
+  article_id: z.number().int().positive().nullable().optional(),
+  designation: z.string().min(1).max(120),
+  report: z.coerce.number().int().min(0).default(0),
+  produit: z.coerce.number().int().min(0).default(0),
+  vendus: z.coerce.number().int().min(0).default(0),
+  pu: z.coerce.number().int().min(0).default(0),
+  reste: z.coerce.number().int().min(0).default(0),
+  racis: z.coerce.number().int().min(0).default(0),
+});
+
+export const journalStockMatiereSchema = z.object({
+  designation: z.string().min(1).max(120),
+  stock_initial: z.coerce.number().int().min(0).default(0),
+  arrivage: z.coerce.number().int().min(0).default(0),
+  sortie: z.coerce.number().int().min(0).default(0),
+  utilise: z.coerce.number().int().min(0).default(0),
+});
+
+export const journalClientSpecialSchema = z.object({
+  designation: z.string().min(1).max(120),
+  quantity: z.coerce.number().int().min(0).default(0),
+  unit_price: z.coerce.number().int().min(0).default(0),
+  total: z.coerce.number().int().min(0).default(0),
+  amount_due: z.coerce.number().int().min(0).default(0),
+  amount_paid: z.coerce.number().int().min(0).default(0),
+  amount_to_pay: z.coerce.number().int().min(0).default(0),
+});
+
+export const journalDepenseSchema = z.object({
+  designation: z.string().min(1).max(160),
+  montant: z.coerce.number().int().min(0).default(0),
+});
+
+export const glacierCategorySchema = z.enum(["RAFRAICHISSEMENT", "RESTAURANT"]);
+
+export const glacierLineSchema = z.object({
+  category: glacierCategorySchema.default("RAFRAICHISSEMENT"),
+  designation: z.string().min(1).max(160),
+  stock_initial: z.coerce.number().int().min(0).default(0),
+  arrivage: z.coerce.number().int().min(0).default(0),
+  vendus: z.coerce.number().int().min(0).default(0),
+  pu: z.coerce.number().int().min(0).default(0),
+});
+
+export const dailyJournalSchema = z
   .object({
+    boulanger_names: z.string().max(1000).nullable().optional(),
     cashier_name: z.string().max(120).nullable().optional(),
-    manager_name: z.string().max(120).nullable().optional(),
+    cashier_phone: z.string().max(40).nullable().optional(),
     personnel: z.string().max(1000).nullable().optional(),
+    observations: z.string().max(1000).nullable().optional(),
     montant_verse: z.coerce.number().int().min(0).default(0),
     bank_name: z.string().max(80).nullable().optional(),
     bank_ref: z.string().max(80).nullable().optional(),
-    gas_bottle_level: z.string().max(40).nullable().optional(),
-    unsold_broken: z.coerce.number().int().min(0).default(0),
-    unsold_stale: z.coerce.number().int().min(0).default(0),
-    unsold_ration: z.coerce.number().int().min(0).default(0),
-    unsold_other: z.coerce.number().int().min(0).default(0),
-    notes: z.string().max(1000).nullable().optional(),
-    production: z.array(dailyProductionLineSchema).default([]),
-    special_clients: z
-      .array(
-        z.object({
-          client_name: z.string().min(1).max(120),
-          quantity: z.coerce.number().int().min(0).default(0),
-          unit_price: z.coerce.number().int().min(0).default(0),
-          amount_due: z.coerce.number().int().min(0).default(0),
-          amount_paid: z.coerce.number().int().min(0).default(0),
-          amount_to_pay: z.coerce.number().int().min(0).default(0),
-        }),
-      )
-      .default([]),
-    materials: z
-      .array(
-        z.object({
-          article_id: z.coerce.number().int().positive().nullable().optional(),
-          designation: z.string().min(1).max(120),
-          stock_initial: z.coerce.number().int().min(0).default(0),
-          arrivage: z.coerce.number().int().min(0).default(0),
-          sortie: z.coerce.number().int().min(0).default(0),
-          utilise: z.coerce.number().int().min(0).default(0),
-          stock_k: z.coerce.number().int().min(0).default(0),
-          stock_final_sac: z.coerce.number().int().min(0).default(0),
-        }),
-      )
-      .default([]),
+    wave_amount: z.coerce.number().int().min(0).default(0),
+    orange_amount: z.coerce.number().int().min(0).default(0),
+    invendus_casse: z.coerce.number().int().min(0).default(0),
+    invendus_brule: z.coerce.number().int().min(0).default(0),
+    invendus_rasse: z.coerce.number().int().min(0).default(0),
+    invendus_ration: z.coerce.number().int().min(0).default(0),
+    glace_arrivage_pack: z.coerce.number().int().min(0).default(0),
+    glace_arrivage_cornet: z.coerce.number().int().min(0).default(0),
+    glace_vendus: z.coerce.number().int().min(0).default(0),
+    glace_pu: z.coerce.number().int().min(0).default(500),
+    glace_prix_vente: z.coerce.number().int().min(0).default(0),
+    productions: z.array(journalProductionLineSchema).default([]),
+    rafraichissements: z.array(journalRafraichissementSchema).default([]),
+    patisseries: z.array(journalPatisserieSchema).default([]),
+    stock_matieres: z.array(journalStockMatiereSchema).default([]),
+    clients_speciaux: z.array(journalClientSpecialSchema).default([]),
+    depenses: z.array(journalDepenseSchema).default([]),
+    glacier_lines: z.array(glacierLineSchema).default([]),
   })
   .strict();
+
 
 export const ingredientMapSchema = z
   .array(
@@ -195,6 +231,7 @@ export const expenseCreateSchema = z
 export const roleSchema = z.enum(["ADMIN", "RESP_DEPOT", "RESP_BOUTIQUE", "BOULANGER", "VENDEUR"]);
 export const siteKindSchema = z.enum(["DEPOT", "BOUTIQUE"]);
 export const articleTypeSchema = z.enum(["RAW_MATERIAL", "CONSUMABLE", "FINISHED_GOOD", "RESALE_GOOD"]);
+
 
 export const userCreateSchema = z
   .object({

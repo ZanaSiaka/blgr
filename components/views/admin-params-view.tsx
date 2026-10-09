@@ -1,30 +1,23 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Pencil, Plus, Save, Tag, X } from "lucide-react";
 
 import { createCategory, createUnit, updateCategory, updateUnit } from "@/app/actions/admin";
-import { saveIngredientMap } from "@/app/actions/daily";
 import { Button, Card, CardHeader, ErrorBanner, PageHeader, PageShell, SuccessBanner } from "@/components/ui";
 import { useMutate } from "@/components/use-mutate";
-import type { Article, Category, IngredientMapEntry, Site, Unit } from "@/lib/types";
-
-const ROLES = ["FARINE", "LEVURE", "AMELIORANT", "SEL"] as const;
+import type { Category, Site, Unit } from "@/lib/types";
 
 export default function AdminParamsView({
   categories,
   units,
-  articles,
   sites,
-  ingredientMap,
   siteId,
 }: {
   categories: Category[];
   units: Unit[];
-  articles: Article[];
   sites: Site[];
-  ingredientMap: IngredientMapEntry[];
   siteId: number;
 }) {
   const router = useRouter();
@@ -38,14 +31,7 @@ export default function AdminParamsView({
   const [editingUnitCode, setEditingUnitCode] = useState("");
   const [editingUnitName, setEditingUnitName] = useState("");
 
-  const [map, setMap] = useState<Record<string, number>>(
-    Object.fromEntries(ingredientMap.map((m) => [m.role, m.article_id])),
-  );
-
   const { run, pending, error, success } = useMutate();
-  const { run: runIng, pending: ingPending, error: ingError, success: ingSuccess } = useMutate();
-
-  const materials = articles.filter((a) => a.type === "RAW_MATERIAL");
 
   const addCategory = () => {
     run(() => createCategory({ name: catName }).then((r) => ({ ok: r.ok, error: r.ok ? undefined : r.error })));
@@ -60,54 +46,9 @@ export default function AdminParamsView({
     run(() => updateUnit(id, { code: editingUnitCode, name: editingUnitName }).then((r) => ({ ok: r.ok, error: r.ok ? undefined : r.error })));
   };
 
-  const saveMap = () => {
-    const items = ROLES.map((role) => ({ role, article_id: map[role] })).filter((item) => item.article_id);
-    runIng(() => saveIngredientMap(siteId, items).then((r) => ({ ok: r.ok, error: r.ok ? undefined : r.error })));
-  };
-
   return (
     <PageShell>
-      <PageHeader title="Paramètres" subtitle="Catégories, unités et mapping des ingrédients de la fiche journalière" />
-
-      <Card className="p-5 space-y-4">
-        <CardHeader
-          title="Ingrédients de la fiche journalière"
-          subtitle="Associez chaque ingrédient (farine, levure, améliorant, sel) à un article pour la déduction automatique du stock"
-          right={
-            <select
-              value={siteId}
-              onChange={(e) => router.push(`/admin/parametres?site_id=${e.target.value}`)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-md px-3 py-2"
-            >
-              {sites.map((site) => (
-                <option key={site.id} value={site.id}>{site.name}</option>
-              ))}
-            </select>
-          }
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {ROLES.map((role) => (
-            <div key={role}>
-              <label className="block text-xs font-medium text-slate-700 mb-1">{role}</label>
-              <select
-                value={map[role] ?? ""}
-                onChange={(e) => setMap({ ...map, [role]: Number(e.target.value) })}
-                className="w-full text-xs bg-slate-50 border border-slate-200 rounded-md px-3 py-2"
-              >
-                <option value="">— Aucun —</option>
-                {materials.map((article) => (
-                  <option key={article.id} value={article.id}>{article.name} ({article.unit.code})</option>
-                ))}
-              </select>
-            </div>
-          ))}
-        </div>
-        {ingError ? <ErrorBanner message={ingError} /> : null}
-        {ingSuccess ? <SuccessBanner message={ingSuccess} /> : null}
-        <Button onClick={saveMap} disabled={ingPending}>
-          <Save className="w-3.5 h-3.5" /> {ingPending ? "Enregistrement..." : "Enregistrer le mapping"}
-        </Button>
-      </Card>
+      <PageHeader title="Paramètres" subtitle="Catégories et unités" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card className="p-5 space-y-4">

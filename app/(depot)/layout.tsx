@@ -11,24 +11,16 @@ const DEPOT_LINKS: NavItem[] = [
   { href: "/recettes", label: "Recettes" },
   { href: "/stock-central", label: "Stock Central" },
   { href: "/rapports", label: "Rapports" },
-  { href: "/rapports/journee", label: "Fiche Journée" },
+  { href: "/rapports/journeau", label: "Journal" },
   { href: "/admin", label: "Administration" },
 ];
 
 export default async function DepotLayout({ children }: { children: React.ReactNode }) {
   const session = await requireSession();
   const isDepot = session.user.role === "ADMIN" || session.user.role === "RESP_DEPOT";
-  if (!isDepot) redirect("/caisse");
+  if (!isDepot) redirect("/reception");
 
-  const links =
-    session.user.role === "ADMIN"
-      ? [
-          ...DEPOT_LINKS,
-          { href: "/caisse", label: "Caisse" },
-          { href: "/depenses", label: "Dépenses" },
-          { href: "/stock-boutique", label: "Stock Boutique" },
-        ]
-      : DEPOT_LINKS;
+  const links = DEPOT_LINKS;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans">

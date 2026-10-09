@@ -18,7 +18,7 @@ export async function createSale(
     const ticket = await apiPost<SaleTicket>("/pos/sales", parsed.data, {
       "Idempotency-Key": idempotencyKey,
     });
-    revalidatePath("/caisse");
+    revalidatePath("/reception");
     revalidatePath("/dashboard");
     return { ok: true, data: ticket };
   } catch (err) {
@@ -49,7 +49,7 @@ export async function closeClosure(
   try {
     const closure = await apiPost<Closure>(`/pos/closures/${closureId}/close`, parsed.data);
     revalidatePath("/clotures");
-    revalidatePath("/caisse");
+    revalidatePath("/reception");
     return { ok: true, data: closure };
   } catch (err) {
     return toActionResult(err);

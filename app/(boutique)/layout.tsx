@@ -5,11 +5,10 @@ import { requireSession } from "@/lib/auth";
 import type { NavItem } from "@/components/nav";
 
 const BOUTIQUE_LINKS: NavItem[] = [
-  { href: "/caisse", label: "Caisse (POS)" },
   { href: "/reception", label: "Réception" },
   { href: "/production", label: "Production" },
+  { href: "/journeau", label: "Journal" },
   { href: "/depenses", label: "Dépenses" },
-  { href: "/journee", label: "Fiche Journée" },
   { href: "/stock-boutique", label: "Stock Boutique" },
   { href: "/clotures", label: "Clôtures" },
 ];

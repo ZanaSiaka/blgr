@@ -184,6 +184,7 @@ export function PageShell({ children }: { children: ReactNode }) {
   );
 }
 
-export function formatFCFA(amount: number): string {
+export function formatFCFA(amount: number | null | undefined): string {
+  if (amount == null || isNaN(amount)) return "0 FCFA";
   return `${amount.toLocaleString("fr-FR")} FCFA`;
 }
