@@ -6,6 +6,7 @@ import type { DailyJournalData, Site } from "@/lib/types";
 import { formatFCFA } from "@/components/ui";
 import SitePicker from "@/components/site-picker";
 import JournalNav from "@/components/journal-nav";
+import {Download} from "lucide-react";
 
 const SECTIONS = [
   { id: "production", label: "Production" },
@@ -31,6 +32,7 @@ export default async function JourneauHomePage({
   const journal = await apiGet<DailyJournalData>(`/daily-journals/${siteId}/${date}`).catch(() => null);
   const siteName = sites.find((s) => s.id === siteId)?.name ?? "Boutique";
 
+
   if (!journal) {
     return (
       <div className="space-y-4">
@@ -53,6 +55,7 @@ export default async function JourneauHomePage({
   return (
     <div className="max-w-6xl mx-auto">
       <h1 className="text-lg font-semibold">Journal Quotidien — {siteName} · {date}</h1>
+
       <JournalNav basePath="/journeau" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-lg border p-4 space-y-2">

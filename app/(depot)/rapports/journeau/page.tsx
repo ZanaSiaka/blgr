@@ -6,6 +6,7 @@ import type { DailyJournalData, Site } from "@/lib/types";
 import { formatFCFA } from "@/components/ui";
 import SitePicker from "@/components/site-picker";
 import JournalNav from "@/components/journal-nav";
+import {Download} from "lucide-react";
 
 const SECTIONS = [
   { id: "production", label: "Production" },
@@ -30,6 +31,8 @@ export default async function JourneauAdminHomePage({
   const date = sp.date ?? new Date().toISOString().slice(0, 10);
   const journal = await apiGet<DailyJournalData>(`/daily-journals/${siteId}/${date}`).catch(() => null);
   const siteName = sites.find((s) => s.id === siteId)?.name ?? "Dépôt";
+  const exportUrl = (format: "xlsx" | "pdf") =>
+      `/api/export/daily-journal?site_id=${siteId}&date=${date}&format=${format}`;
 
   if (!journal) {
     return (
@@ -53,6 +56,14 @@ export default async function JourneauAdminHomePage({
   return (
     <div className="space-y-4">
       <h1 className="text-lg font-semibold">Journal Quotidien (lecture) — {siteName} · {date}</h1>
+      <div className="flex gap-2">
+        <a href={exportUrl("xlsx")} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5">
+          <Download className="w-3.5 h-3.5" /> Excel
+        </a>
+        <a href={exportUrl("pdf")} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5">
+          <Download className="w-3.5 h-3.5" /> PDF
+        </a>
+      </div>
       <JournalNav basePath="/rapports/journeau" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-lg border p-4 space-y-2">
