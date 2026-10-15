@@ -170,8 +170,8 @@ export function PageHeader({
       <div>
         <h2 className="text-base font-semibold text-slate-900">{title}</h2>
         {subtitle ? <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p> : null}
+        {badge}
       </div>
-      {badge}
     </div>
   );
 }
